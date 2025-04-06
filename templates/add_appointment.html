@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add appointment</title>
+</head>
+<body>
+    <h2>Schedule Appointment</h2>
+    <form method="POST">
+        Princess:
+        <select name="princess_id">
+            {% for princess in princesses %}
+            <option value="{{ princess.id }}">{{ princess.name }}</option>
+            {% endfor %}
+        </select><br>
+        Hairstyle:
+        <select name="hairstyle_id">
+            {% for hairstyle in hairstyles %}
+            <option value="{{ hairstyle.id }}">{{ hairstyle.name }}</option>
+            {% endfor %}
+        </select><br>
+        Appointment Time: <input type="datetime-local" name="appointment_time" required><br>
+        <button type="submit">Schedule Appointment</button>
+    </form>
+</body>
+</html>
