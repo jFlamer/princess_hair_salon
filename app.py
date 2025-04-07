@@ -8,8 +8,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.config['SECRET_KEY'] = 'dev'
 db.init_app(app)
 
-API_KEY = 'your_openweathermap_api_key'
-BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
+# API_KEY = 'your_openweathermap_api_key'
+# BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
+
+OMDB_API_KEY = 'ea3ffd44'
+OMDB_BASE_URL = 'http://www.omdbapi.com/'
 
 # Create all tables within the context of the app
 with app.app_context():
@@ -33,8 +36,20 @@ def index():
     # Paginate appointments and hairstyles
     appointment_pagination = Appointment.query.paginate(page=page, per_page=10)
     hairstyle_pagination = Hairstyle.query.paginate(page=page, per_page=10)
+    #
+    # return render_template('index.html',
+    #                        pagination=princess_pagination,
+    #                        princesses=princess_pagination.items,
+    #                        appointments=appointment_pagination.items,
+    #                        hairstyles=hairstyle_pagination.items)
+
+    movies = db.session.query(Princess.movie).distinct().all()
+    titles = list(set([title.strip() for (title,) in movies if title]))
+
+    ratings = [get_movie_rating(title) for title in titles]
 
     return render_template('index.html',
+                           movie_ratings=ratings,
                            pagination=princess_pagination,
                            princesses=princess_pagination.items,
                            appointments=appointment_pagination.items,
@@ -74,7 +89,8 @@ def appointments():
     page = request.args.get('page', 1, type=int)
     appointment_pagination = Appointment.query.paginate(page=page, per_page=10)
 
-    return render_template('appointments.html', appointments=appointment_pagination.items, pagination=appointment_pagination)
+    return render_template('appointments.html', appointments=appointment_pagination.items,
+                           pagination=appointment_pagination)
 
 
 @app.route('/add_princess', methods=['GET', 'POST'])
@@ -83,15 +99,40 @@ def add_princess():
         try:
             name = request.form['name']
             movie = request.form['movie']
-            release_date = datetime.strptime(request.form['release_date'], "%Y-%m-%d")
+            # release_date = datetime.strptime(request.form['release_date'], "%Y-%m-%d")
             is_animated = request.form.get('is_animated') == 'on'
-            rating = float(request.form['rating'])
+            # rating = float(request.form['rating'])
+
+            # fetching rest of the data
+            response = requests.get(f"{OMDB_BASE_URL}?t={movie}&apikey={OMDB_API_KEY}")
+            # response = requests.get(f"{OMDB_BASE_URL}?t={movie}")
+            data = response.json()
+
+            if data.get('Response') == 'True':
+                try:
+                    # Try parsing the release date
+                    release_date_str = data.get('Released', 'Unknown')
+                    if release_date_str != 'Unknown':
+                        release_date = datetime.strptime(release_date_str, "%d %b %Y")
+                    else:
+                        release_date = None  # Set to None if no valid date
+                except ValueError:
+                    release_date = None  # Set to None if parsing fails
+
+                rating = data.get('imdbRating', 'N/A')
+            else:
+                release_date = None
+                rating = None
+
+            print(movie)
+            print(f"Release Date: {release_date}")
+            print(f"Rating: {rating}")
 
             new_princess = Princess(
                 name=name,
                 movie=movie,
                 release_date=release_date,
-                is_animated=is_animated,
+                is_animated=request.form.get('is_animated') == 'on',
                 rating=rating
             )
 
@@ -104,7 +145,6 @@ def add_princess():
             return f"<h3>Something went wrong: {e}</h3>", 500
 
     return render_template('add_princess.html')
-
 
 
 @app.route('/add_hairstyle', methods=['GET', 'POST'])
@@ -129,7 +169,8 @@ def add_appointment():
         princess_id = int(request.form['princess_id'])
         hairstyle_id = int(request.form['hairstyle_id'])
         appointment_time = datetime.strptime(request.form['appointment_time'], "%Y-%m-%dT%H:%M")
-        new_appointment = Appointment(princess_id=princess_id, hairstyle_id=hairstyle_id, appointment_time=appointment_time)
+        new_appointment = Appointment(princess_id=princess_id, hairstyle_id=hairstyle_id,
+                                      appointment_time=appointment_time)
         db.session.add(new_appointment)
         db.session.commit()
         return redirect(url_for('appointments'))
@@ -141,7 +182,7 @@ def complete_appointment(id):
     appointment = Appointment.query.get(id)
     appointment.completed = True  # Use 'completed' instead of 'status'
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('appointments'))
 
 
 @app.route('/delete_appointment/<int:id>')
@@ -149,36 +190,39 @@ def delete_appointment(id):
     appointment = Appointment.query.get(id)
     db.session.delete(appointment)
     db.session.commit()
-    return redirect(url_for('index'))
+    return redirect(url_for('appointments'))
 
 
-@app.route('/weather', methods=['GET', 'POST'])
-def weather():
-    city = request.args.get('city', 'London')  # Default city is London
-    if request.method == 'POST':
-        city = request.form['city']
+@app.route('/delete_princess/<int:id>')
+def delete_princess(id):
+    princess = Princess.query.get(id)
+    db.session.delete(princess)
+    db.session.commit()
+    return redirect(url_for('princesses'))
 
-    # Fetch weather data from OpenWeatherMap API
+
+@app.route('/delete_hairstyle/<int:id>')
+def delete_hairstyle(id):
+    hairstyle = Hairstyle.query.get(id)
+    db.session.delete(hairstyle)
+    db.session.commit()
+    return redirect(url_for('hairstyles'))
+
+
+def get_movie_rating(title):
     try:
-        response = requests.get(f"{BASE_URL}?q={city}&appid={API_KEY}&units=metric")
+        response = request.get(f"{OMDB_BASE_URL}?t={title}&apikey={OMDB_API_KEY}")
         data = response.json()
-
-        # Check if the response contains valid data
-        if data.get("cod") != 200:
-            return render_template('weather.html', error="City not found or invalid API key.")
-
-        # Parse weather data
-        weather = {
-            'city': data['name'],
-            'temperature': data['main']['temp'],
-            'description': data['weather'][0]['description'],
-            'humidity': data['main']['humidity'],
-            'wind_speed': data['wind']['speed'],
-        }
-        return render_template('weather.html', weather=weather)
-
+        if data.get('Response') == 'True':
+            return {
+                'title': data['Title'],
+                'rating': data.get('imdbRating', 'N/A'),
+                'poster': data.get('Poster', ''),
+                'year': data.get('Year', '')
+            }
     except Exception as e:
-        return render_template('weather.html', error="Failed to retrieve weather data.")
+        print("OMDb error: ", e)
+    return None
 
 
 if __name__ == '__main__':

@@ -4,24 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Princess Hair Salon</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
 </head>
 <body>
-    <h1>Princess Hair Salon</h1>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">Princess Hair Salon</h1>
+            <nav class="nav">
+                <a href="{{ url_for('princesses') }}" class="nav-btn">Princesses</a>
+                <a href="{{ url_for('hairstyles') }}" class="nav-btn">Hairstyles</a>
+                <a href="{{ url_for('appointments') }}" class="nav-btn">Appointments</a>
+                <a href="{{ url_for('weather') }}" class="nav-btn">Weather</a>
+            </nav>
+        </div>
+    </header>
+
+<!--    <h1>Princess Hair Salon</h1>-->
 
 
-    <h2>Princesses</h2>
-    <a href="{{ url_for('princesses') }}">View All Princesses</a>
+<!--    <h2>Princesses</h2>-->
+<!--    <a href="{{ url_for('princesses') }}">View All Princesses</a>-->
 
-    <h2>Hairstyles</h2>
-    <a href="{{ url_for('hairstyles') }}">View All Hairstyles</a>
+<!--    <h2>Hairstyles</h2>-->
+<!--    <a href="{{ url_for('hairstyles') }}">View All Hairstyles</a>-->
 
-    <h2>Appointments</h2>
-    <a href="{{ url_for('appointments') }}">View All Appointments</a>
-    <!-- Link to weather -->
-    <a href="/weather">
-        <img src="https://via.placeholder.com/300" alt="Weather Icon" width="300" height="200">
-    </a>
-    <p>Click the image to view weather information for your city.</p>
+<!--    <h2>Appointments</h2>-->
+<!--    <a href="{{ url_for('appointments') }}">View All Appointments</a>-->
+<!--    &lt;!&ndash; Link to weather &ndash;&gt;-->
+<!--    <a href="/weather">-->
+<!--        <img src="https://via.placeholder.com/300" alt="Weather Icon" width="300" height="200">-->
+<!--    </a>-->
+<!--    <p>Click the image to view weather information for your city.</p>-->
+
+    <h2>Our best clients</h2>
+    <div class="movie-ratings">
+        {% for movie in movie_ratings %}
+            {% if movie %}
+            <div class="movie-poster">
+                <h3>{{ movie['title'] }}</h3>
+                <p><strong>Year:</strong> {{ movie['year'] }}</p>
+                <p><strong>IMDB Rating:</strong> {{ movie['imdb_rating'] }}</p>
+                <p><strong>Genre:</strong> {{ movie['genre'] }}</p>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
 
     <!-- Pagination Controls -->
     <div>

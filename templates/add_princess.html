@@ -2,20 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Add Product</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Princess</title>
 </head>
 <body>
-    <h2>Add Princess</h2>
-    <form method="POST">
-        Name: <input type="text" name="name" required><br>
-        Movie: <input type="text" name="movie" required><br>
-        Release Date: <input type="date" name="release_date" required><br>
-        Is Animated: <input type="checkbox" name="is_animated"><br>
-        Rating: <input type="number" name="rating" step="0.1" required><br>
+    <h1>Add Princess</h1>
+
+    <!-- Form to Add a New Princess -->
+    <form method="POST" action="{{ url_for('add_princess') }}">
+        <!-- Princess Name -->
+        <label for="name">Princess Name:</label>
+        <input type="text" id="name" name="name" required>
+
+        <!-- Movie Name -->
+        <label for="movie">Movie Name:</label>
+        <input type="text" id="movie" name="movie" required>
+
+        <!-- Animated Checkbox -->
+        <label for="is_animated">Is Animated?</label>
+        <input type="checkbox" id="is_animated" name="is_animated">
+
+        <!-- Submit Button -->
         <button type="submit">Add Princess</button>
     </form>
 
-
-    <p><a href="/">Back to the products list</a></p>
 </body>
 </html>

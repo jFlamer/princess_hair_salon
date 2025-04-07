@@ -9,9 +9,9 @@ class Princess(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     movie = db.Column(db.String(100), nullable=False)
-    release_date = db.Column(db.Date, nullable=False)
+    release_date = db.Column(db.Date, nullable=True)
     is_animated = db.Column(db.Boolean, nullable=False)
-    rating = db.Column(db.Float, nullable=False)
+    rating = db.Column(db.Float, nullable=True)
 
     # Relationship for appointments
     appointments = db.relationship('Appointment', back_populates='princess')

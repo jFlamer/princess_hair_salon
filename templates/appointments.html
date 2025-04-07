@@ -12,8 +12,9 @@
         <tr>
             <th>Princess</th>
             <th>Hairstyle</th>
-            <th>Appointment Time</th>
+            <th>Time</th>
             <th>Status</th>
+            <th>Actions</th>
         </tr>
         {% for appointment in appointments %}
         <tr>
@@ -21,6 +22,9 @@
             <td>{{ appointment.hairstyle.name }}</td>
             <td>{{ appointment.appointment_time }}</td>
             <td>{{ 'Completed' if appointment.completed else 'Pending' }}</td>
+            <td>
+                <a href="{{ url_for('delete_appointment', id=appointment.id) }}" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
         </tr>
         {% endfor %}
     </table>

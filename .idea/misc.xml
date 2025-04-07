@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.12 (sampleProject)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13.2 WSL (Ubuntu-24.04): (/home/jflamer/miniconda3/envs/FL/bin/python)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13.2 WSL (Ubuntu-24.04): (/home/jflamer/miniconda3/envs/fl/bin/python)" project-jdk-type="Python SDK" />
 </project>
