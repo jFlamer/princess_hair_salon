@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments</title>
+</head>
+<body>
+    <h1>Appointments</h1>
+
+    <table>
+        <tr>
+            <th>Princess</th>
+            <th>Hairstyle</th>
+            <th>Appointment Time</th>
+            <th>Status</th>
+        </tr>
+        {% for appointment in appointments %}
+        <tr>
+            <td>{{ appointment.princess.name }}</td>
+            <td>{{ appointment.hairstyle.name }}</td>
+            <td>{{ appointment.appointment_time }}</td>
+            <td>{{ 'Completed' if appointment.completed else 'Pending' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{{ url_for('add_appointment') }}">Add a New Appointment</a>
+
+    <div>
+        <a href="{{ url_for('index') }}">Back to Home</a>
+        <p>Page {{ pagination.page }} of {{ pagination.pages }}</p>
+    </div>
+</body>
+</html>

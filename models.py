@@ -32,10 +32,10 @@ class Hairstyle(db.Model):
 class Appointment(db.Model):
     __tablename__ = 'appointment'
     id = db.Column(db.Integer, primary_key=True)
-    princes_id = db.Column(db.Integer, db.ForeignKey('princess.id'), nullable=False)
+    princess_id = db.Column(db.Integer, db.ForeignKey('princess.id'), nullable=False)
     hairstyle_id = db.Column(db.Integer, db.ForeignKey('hairstyle.id'), nullable=False)
     appointment_time = db.Column(db.DateTime, nullable=False)
-    completed = db.Column(db.Boolean, nullable=False)
+    completed = db.Column(db.Boolean, nullable=False, default = False)
 
     # Define relationships with Princess and Hairstyle models
     princess = db.relationship('Princess', back_populates='appointments')
