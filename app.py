@@ -1,4 +1,6 @@
 from datetime import datetime
+from urllib.parse import quote
+
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, Princess, Hairstyle, Appointment
 import requests
@@ -104,7 +106,8 @@ def add_princess():
             # rating = float(request.form['rating'])
 
             # fetching rest of the data
-            response = requests.get(f"{OMDB_BASE_URL}?t={movie}&apikey={OMDB_API_KEY}")
+            movie_encoded = movie.lower()
+            response = requests.get(f"{OMDB_BASE_URL}?t={movie_encoded}&apikey={OMDB_API_KEY}")
             # response = requests.get(f"{OMDB_BASE_URL}?t={movie}")
             data = response.json()
 
@@ -121,12 +124,13 @@ def add_princess():
 
                 rating = data.get('imdbRating', 'N/A')
             else:
+                print(movie_encoded)
                 release_date = None
                 rating = None
 
-            print(movie)
-            print(f"Release Date: {release_date}")
-            print(f"Rating: {rating}")
+            # print(movie)
+            # print(f"Release Date: {release_date}")
+            # print(f"Rating: {rating}")
 
             new_princess = Princess(
                 name=name,
