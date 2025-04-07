@@ -41,6 +41,42 @@ def index():
                            hairstyles=hairstyle_pagination.items)
 
 
+@app.route('/princesses', methods=['GET'])
+def princesses():
+    search = request.args.get('search', '')
+    sort_by = request.args.get('sort', 'id')  # Default sort by 'id'
+    page = request.args.get('page', 1, type=int)
+
+    # Querying princesses with pagination and sorting
+    query = Princess.query
+    if search:
+        query = query.filter(Princess.name.contains(search))
+
+    # Sorting logic
+    query = query.order_by(getattr(Princess, sort_by))
+
+    # Paginate the results
+    princess_pagination = query.paginate(page=page, per_page=10)
+
+    return render_template('princesses.html', princesses=princess_pagination.items, pagination=princess_pagination)
+
+
+@app.route('/hairstyles', methods=['GET'])
+def hairstyles():
+    page = request.args.get('page', 1, type=int)
+    hairstyle_pagination = Hairstyle.query.paginate(page=page, per_page=10)
+
+    return render_template('hairstyles.html', hairstyles=hairstyle_pagination.items, pagination=hairstyle_pagination)
+
+
+@app.route('/appointments', methods=['GET'])
+def appointments():
+    page = request.args.get('page', 1, type=int)
+    appointment_pagination = Appointment.query.paginate(page=page, per_page=10)
+
+    return render_template('appointments.html', appointments=appointment_pagination.items, pagination=appointment_pagination)
+
+
 @app.route('/add_princess', methods=['GET', 'POST'])
 def add_princess():
     if request.method == 'POST':
@@ -61,7 +97,7 @@ def add_princess():
 
             db.session.add(new_princess)
             db.session.commit()
-            return redirect(url_for('index'))
+            return redirect(url_for('princesses'))
         except Exception as e:
             # This will print the error to your terminal
             print("ERROR:", e)
@@ -81,7 +117,7 @@ def add_hairstyle():
         new_hairstyle = Hairstyle(name=name, description=description, duration=duration, price=price)
         db.session.add(new_hairstyle)
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('hairstyles'))
     return render_template('add_hairstyle.html')
 
 
@@ -96,7 +132,7 @@ def add_appointment():
         new_appointment = Appointment(princess_id=princess_id, hairstyle_id=hairstyle_id, appointment_time=appointment_time)
         db.session.add(new_appointment)
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('appointments'))
     return render_template('add_appointment.html', princesses=princesses, hairstyles=hairstyles)
 
 

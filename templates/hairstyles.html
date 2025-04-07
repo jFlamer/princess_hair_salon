@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hairstyles</title>
+</head>
+<body>
+    <h1>Hairstyles</h1>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+        </tr>
+        {% for hairstyle in hairstyles %}
+        <tr>
+            <td>{{ hairstyle.name }}</td>
+            <td>{{ hairstyle.price }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <a href="{{ url_for('add_hairstyle') }}">Add a New Hairstyle</a>
+
+    <div>
+        <a href="{{ url_for('index') }}">Back to Home</a>
+        <p>Page {{ pagination.page }} of {{ pagination.pages }}</p>
+    </div>
+
+</body>
+</html>

@@ -8,46 +8,15 @@
 <body>
     <h1>Princess Hair Salon</h1>
 
-    <!-- Search Form -->
-    <form method="GET" action="{{ url_for('index') }}">
-        <input type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
-        <button type="submit">Search</button>
-    </form>
 
-    <!-- Link to add a new princess -->
     <h2>Princesses</h2>
-    <a href="{{ url_for('add_princess') }}">Add a New Princess</a>
-    <ul>
-        {% for princess in princesses %}
-        <li>{{ princess.name }} - {{ princess.movie }} - {{ princess.release_date }} </li>
-        {% endfor %}
-    </ul>
+    <a href="{{ url_for('princesses') }}">View All Princesses</a>
 
-    <!-- Sort by options -->
-    <h3>Sort By</h3>
-    <a href="{{ url_for('index', sort='name') }}">Name</a> |
-    <a href="{{ url_for('index', sort='rating') }}">Rating</a> |
-    <a href="{{ url_for('index', sort='release_date') }}">Release Date</a>
+    <h2>Hairstyles</h2>
+    <a href="{{ url_for('hairstyles') }}">View All Hairstyles</a>
 
-    <!-- Link to add a new hairstyle -->
-    <h3>Hairstyles</h3>
-    <a href="{{ url_for('add_hairstyle') }}">Add a New Hairstyle</a>
-    <ul>
-        {% for hairstyle in hairstyles %}
-        <li>{{ hairstyle.name }} - {{ hairstyle.price }} </li>
-        {% endfor %}
-    </ul>
-
-    <!-- Link to add a new appointment -->
-    <h3>Appointments</h3>
-    <a href="{{ url_for('add_appointment') }}">Add a New Appointment</a>
-    <ul>
-        {% for appointment in appointments %}
-        <li>{{ appointment.princess.name }} - {{ appointment.hairstyle.name }} at {{ appointment.appointment_time }} -
-        {% if appointment.completed %}Completed{% else %}Pending{% endif %}</li>
-        {% endfor %}
-    </ul>
-
+    <h2>Appointments</h2>
+    <a href="{{ url_for('appointments') }}">View All Appointments</a>
     <!-- Link to weather -->
     <a href="/weather">
         <img src="https://via.placeholder.com/300" alt="Weather Icon" width="300" height="200">
