@@ -8,6 +8,9 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.config['SECRET_KEY'] = 'dev'
 db.init_app(app)
 
+API_KEY = 'your_openweathermap_api_key'
+BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
+
 # Create all tables within the context of the app
 with app.app_context():
     db.create_all()
@@ -41,17 +44,31 @@ def index():
 @app.route('/add_princess', methods=['GET', 'POST'])
 def add_princess():
     if request.method == 'POST':
-        name = request.form['name']
-        movie = request.form['movie']
-        release_date = datetime.strptime(request.form['release_date'], "%Y-%m-%d")
-        is_animated = request.form['is_animated']
-        rating = request.form['rating']
-        new_princess = Princess(name=name, movie=movie, release_date=release_date, is_animated=is_animated,
-                                rating=rating)
-        db.session.add(new_princess)
-        db.session.commit()
-        return redirect(url_for('index'))
+        try:
+            name = request.form['name']
+            movie = request.form['movie']
+            release_date = datetime.strptime(request.form['release_date'], "%Y-%m-%d")
+            is_animated = request.form.get('is_animated') == 'on'
+            rating = float(request.form['rating'])
+
+            new_princess = Princess(
+                name=name,
+                movie=movie,
+                release_date=release_date,
+                is_animated=is_animated,
+                rating=rating
+            )
+
+            db.session.add(new_princess)
+            db.session.commit()
+            return redirect(url_for('index'))
+        except Exception as e:
+            # This will print the error to your terminal
+            print("ERROR:", e)
+            return f"<h3>Something went wrong: {e}</h3>", 500
+
     return render_template('add_princess.html')
+
 
 
 @app.route('/add_hairstyle', methods=['GET', 'POST'])
@@ -97,6 +114,35 @@ def delete_appointment(id):
     db.session.delete(appointment)
     db.session.commit()
     return redirect(url_for('index'))
+
+
+@app.route('/weather', methods=['GET', 'POST'])
+def weather():
+    city = request.args.get('city', 'London')  # Default city is London
+    if request.method == 'POST':
+        city = request.form['city']
+
+    # Fetch weather data from OpenWeatherMap API
+    try:
+        response = requests.get(f"{BASE_URL}?q={city}&appid={API_KEY}&units=metric")
+        data = response.json()
+
+        # Check if the response contains valid data
+        if data.get("cod") != 200:
+            return render_template('weather.html', error="City not found or invalid API key.")
+
+        # Parse weather data
+        weather = {
+            'city': data['name'],
+            'temperature': data['main']['temp'],
+            'description': data['weather'][0]['description'],
+            'humidity': data['main']['humidity'],
+            'wind_speed': data['wind']['speed'],
+        }
+        return render_template('weather.html', weather=weather)
+
+    except Exception as e:
+        return render_template('weather.html', error="Failed to retrieve weather data.")
 
 
 if __name__ == '__main__':
