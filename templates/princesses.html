@@ -11,14 +11,19 @@
     <!-- Search Form -->
     <form method="GET" action="{{ url_for('princesses') }}">
         <input type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
-        <button type="submit">Search</button>
+        <button type="submi need to update my css fileit">Search</button>
     </form>
 
     <!-- Sort by options -->
-    <h3>Sort By</h3>
-    <a href="{{ url_for('princesses', sort='name') }}">Name</a> |
-    <a href="{{ url_for('princesses', sort='rating') }}">Rating</a> |
-    <a href="{{ url_for('princesses', sort='release_date') }}">Release Date</a>
+    <div class="sort-container">
+        <h3>Sort By</h3>
+        <div class="sort-buttons">
+            <a href="{{ url_for('princesses', sort='name') }}" class="sort-btn">Name</a>
+            <a href="{{ url_for('princesses', sort='rating') }}" class="sort-btn">Rating</a>
+            <a href="{{ url_for('princesses', sort='release_date') }}" class="sort-btn">Release Date</a>
+        </div>
+    </div>
+
 
     <table>
         <tr>
@@ -41,7 +46,10 @@
         {% endfor %}
     </table>
 
-  <a href="{{ url_for('add_princess') }}">Add a New Princess</a>
+  <div class="add">
+      <a href="{{ url_for('add_princess') }}" class="add-btn">Add a New Princess</a>
+  </div>
+
 
     <div>
         <!-- Pagination Controls -->
@@ -59,8 +67,8 @@
     <br>
 
     <!-- Back to Home Link -->
-    <div>
-        <a href="{{ url_for('index') }}">Back to Home</a>
+    <div class="back-home">
+        <a href="{{ url_for('index') }}" class="home-btn">Back to Home</a>
     </div>
 </body>
 </html>

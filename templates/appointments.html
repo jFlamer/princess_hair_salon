@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Appointments</title>
 </head>
 <body>
@@ -29,7 +30,10 @@
         {% endfor %}
     </table>
 
-    <a href="{{ url_for('add_appointment') }}">Add a New Appointment</a>
+    <div class="add">
+        <a href="{{ url_for('add_appointment') }}" class="add-btn">Add a New Appointment</a>
+    </div>
+
 
     <div>
         <a href="{{ url_for('index') }}">Back to Home</a>

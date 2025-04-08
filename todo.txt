@@ -1,0 +1,3 @@
+1. Prettier UI for adders
+2. Add option of marking appointment done
+3. Add option for editing
