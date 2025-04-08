@@ -15,7 +15,6 @@
                 <a href="{{ url_for('princesses') }}" class="nav-btn">Princesses</a>
                 <a href="{{ url_for('hairstyles') }}" class="nav-btn">Hairstyles</a>
                 <a href="{{ url_for('appointments') }}" class="nav-btn">Appointments</a>
-                <a href="{{ url_for('weather') }}" class="nav-btn">Weather</a>
             </nav>
         </div>
     </header>
@@ -43,10 +42,14 @@
             {% if movie %}
             <div class="movie-poster">
                 <h3>{{ movie['title'] }}</h3>
-                <p><strong>Year:</strong> {{ movie['year'] }}</p>
-                <p><strong>IMDB Rating:</strong> {{ movie['imdb_rating'] }}</p>
-                <p><strong>Genre:</strong> {{ movie['genre'] }}</p>
+                    <p><strong>Year:</strong> {{ movie['year'] }}</p>
+                    <p><strong>IMDB Rating:</strong> {{ movie['rating'] }}</p>
+                    <p><strong>Genre:</strong> {{ movie['genre'] }}</p>
+                    {% if movie['poster'] and movie['poster'] != 'N/A' %}
+                        <img src="{{ movie['poster'] }}" alt="{{ movie['title'] }} poster" width="200">
+                    {% endif %}
             </div>
+
             {% endif %}
         {% endfor %}
     </div>

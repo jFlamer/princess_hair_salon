@@ -97,6 +97,9 @@ def appointments():
 
 @app.route('/add_princess', methods=['GET', 'POST'])
 def add_princess():
+    poster = None
+    genre = None
+    rating = None
     if request.method == 'POST':
         try:
             name = request.form['name']
@@ -106,10 +109,11 @@ def add_princess():
             # rating = float(request.form['rating'])
 
             # fetching rest of the data
-            movie_encoded = movie.lower()
+            movie_encoded = movie.replace(" ", "+")
             response = requests.get(f"{OMDB_BASE_URL}?t={movie_encoded}&apikey={OMDB_API_KEY}")
             # response = requests.get(f"{OMDB_BASE_URL}?t={movie}")
             data = response.json()
+            print(f"Requesting: {OMDB_BASE_URL}?t={movie.lower()}&apikey={OMDB_API_KEY}")
 
             if data.get('Response') == 'True':
                 try:
@@ -132,12 +136,17 @@ def add_princess():
             # print(f"Release Date: {release_date}")
             # print(f"Rating: {rating}")
 
+            genre = data.get('Genre')
+            poster = data.get('Poster')
+
             new_princess = Princess(
                 name=name,
                 movie=movie,
                 release_date=release_date,
                 is_animated=request.form.get('is_animated') == 'on',
-                rating=rating
+                rating=rating,
+                poster_url = poster,
+                genre=genre,
             )
 
             db.session.add(new_princess)
@@ -148,7 +157,7 @@ def add_princess():
             print("ERROR:", e)
             return f"<h3>Something went wrong: {e}</h3>", 500
 
-    return render_template('add_princess.html')
+    return render_template('add_princess.html', poster=poster, genre=genre, rating=rating)
 
 
 @app.route('/add_hairstyle', methods=['GET', 'POST'])
@@ -215,14 +224,15 @@ def delete_hairstyle(id):
 
 def get_movie_rating(title):
     try:
-        response = request.get(f"{OMDB_BASE_URL}?t={title}&apikey={OMDB_API_KEY}")
+        response = requests.get(f"{OMDB_BASE_URL}?t={title}&apikey={OMDB_API_KEY}")
         data = response.json()
         if data.get('Response') == 'True':
             return {
-                'title': data['Title'],
+                'title': data.get('Title', title),
                 'rating': data.get('imdbRating', 'N/A'),
                 'poster': data.get('Poster', ''),
-                'year': data.get('Year', '')
+                'year': data.get('Year', ''),
+                'genre': data.get('Genre', 'N/A')
             }
     except Exception as e:
         print("OMDb error: ", e)

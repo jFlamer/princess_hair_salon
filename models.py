@@ -11,7 +11,9 @@ class Princess(db.Model):
     movie = db.Column(db.String(100), nullable=False)
     release_date = db.Column(db.Date, nullable=True)
     is_animated = db.Column(db.Boolean, nullable=False)
-    rating = db.Column(db.Float, nullable=True)
+    rating = db.Column(db.String(10))
+    genre = db.Column(db.String(100))
+    poster_url = db.Column(db.String(300))
 
     # Relationship for appointments
     appointments = db.relationship('Appointment', back_populates='princess')

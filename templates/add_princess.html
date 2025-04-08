@@ -26,5 +26,18 @@
         <button type="submit">Add Princess</button>
     </form>
 
+    {% if genre %}
+    <h2>Genre: {{ genre }}</h2>
+    {% endif %}
+
+    {% if rating %}
+        <h2>IMDB Rating: {{ rating }}</h2>
+    {% endif %}
+
+    {% if poster %}
+        <h2>Poster:</h2>
+        <img src="{{ poster }}" alt="Movie Poster" width="300">
+    {% endif %}
+
 </body>
 </html>
