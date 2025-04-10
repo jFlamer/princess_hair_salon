@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit princess</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h2>Edit Princess</h2>
+  <form method="post">
+      Name: <input type="text" name="name" value="{{ princess.name }}"><br>
+      Movie: <input type="text" name="movie" value="{{ princess.movie }}"><br>
+      Is Animated: <input type="checkbox" name="is_animated"
+                          {% if princess.is_animated %}
+                            checked
+                          {% endif %}><br>
+      <input type="submit" value="Update">
+  </form>
+    <div class="back-home">
+        <a href="{{ url_for('index') }}" class="home-btn">Back to Home</a>
+    </div>
+</body>
+</html>

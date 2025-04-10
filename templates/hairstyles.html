@@ -13,14 +13,20 @@
         <tr>
             <th>Name</th>
             <th>Price</th>
-            <th>Actions</th>
+            <th>Description</th>
+            <th>Delete</th>
+            <th>Edit</th>
         </tr>
         {% for hairstyle in hairstyles %}
         <tr>
             <td>{{ hairstyle.name }}</td>
             <td>{{ hairstyle.price }}</td>
+            <td>{{ hairstyle.description }}</td>
             <td>
                 <a href="{{ url_for('delete_hairstyle', id=hairstyle.id) }}" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+            <td>
+                <a href="{{ url_for('edit_hairstyle', id=hairstyle.id) }}">Edit</a>
             </td>
         </tr>
         {% endfor %}

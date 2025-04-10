@@ -31,7 +31,8 @@
             <th>Movie</th>
             <th>Release Date</th>
             <th>Rating</th>
-            <th>Actions</th>
+            <th>Delete</th>
+            <th>Edit</th>
         </tr>
         {% for princess in princesses %}
         <tr>
@@ -41,6 +42,9 @@
             <td>{{ princess.rating }}</td>
             <td>
                 <a href="{{ url_for('delete_princess', id=princess.id) }}" onclick="return confirm('Are you sure?')">Delete</a>
+            </td>
+            <td>
+                <a href="{{ url_for('edit_princess', id=princess.id) }}">Edit</a>
             </td>
         </tr>
         {% endfor %}

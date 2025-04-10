@@ -10,8 +10,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite3'
 app.config['SECRET_KEY'] = 'dev'
 db.init_app(app)
 
-# API_KEY = 'your_openweathermap_api_key'
-# BASE_URL = "http://api.openweathermap.org/data/2.5/weather"
 
 OMDB_API_KEY = 'ea3ffd44'
 OMDB_BASE_URL = 'http://www.omdbapi.com/'
@@ -222,6 +220,74 @@ def delete_hairstyle(id):
     return redirect(url_for('hairstyles'))
 
 
+@app.route('/edit_princess/<int:id>', methods=['GET', 'POST'])
+def edit_princess(id):
+    princess = Princess.query.get_or_404(id)
+    if request.method == 'POST':
+        princess.name = request.form['name']
+        princess.movie = request.form['movie']
+        princess.is_animated = request.form.get('is_animated') == 'on'
+
+        movie = princess.movie
+        movie_encoded = movie.replace(" ", "+")
+        response = requests.get(f"{OMDB_BASE_URL}?t={movie_encoded}&apikey={OMDB_API_KEY}")
+        data = response.json()
+
+        if data.get("Response") == "True":
+            try:
+                release_date_str = data.get('Released', 'Unknown')
+                if release_date_str != "Unknown":
+                    release_date = datetime.strptime(release_date_str, "%d %b %Y")
+                else:
+                    release_date = None
+            except ValueError:
+                release_date = None
+            rating = data.get('imdbRating', 'N/A')
+            poster = data.get('Poster')
+            genre = data.get('Genre')
+        else:
+            release_date = None
+            rating = None
+            poster = None
+            genre = None
+
+        princess.release_date = release_date
+        princess.poster = poster
+        princess.rating = rating
+        princess.genre = genre
+
+        db.session.commit()
+        return redirect(url_for('princesses'))
+    return render_template('edit_princess.html', princess=princess)
+
+@app.route('/edit_hairstyle/<int:id>', methods=['GET', 'POST'])
+def edit_hairstyle(id):
+    hairstyle = Hairstyle.query.get_or_404(id)
+    if request.method == 'POST':
+        hairstyle.name = request.form['name']
+        hairstyle.description = request.form['description']
+        hairstyle.duration = int(request.form['duration'])
+        hairstyle.price = float(request.form['price'])
+
+        db.session.commit()
+        return redirect(url_for('hairstyles'))
+    return render_template('edit_hairstyle.html', hairstyle=hairstyle)
+
+
+@app.route('/edit_appointment/<int:id>', methods=['GET', 'POST'])
+def edit_appointment(id):
+    appointment = Appointment.query.get(id)
+    princesses = Princess.query.all()
+    hairstyles = Hairstyle.query.all()
+    if request.method == 'POST':
+        appointment.princess_id = int(request.form['princess_id'])
+        appointment.hairstyle_id = int(request.form['hairstyle_id'])
+        appointment_time_str = request.form['appointment_time']
+        appointment.appointment_time = datetime.strptime(appointment_time_str, "%Y-%m-%dT%H:%M")
+
+        db.session.commit()
+        return redirect(url_for('appointments'))
+    return render_template('edit_appointment.html', princesses=princesses, hairstyles=hairstyles, appointment=appointment)
 def get_movie_rating(title):
     try:
         response = requests.get(f"{OMDB_BASE_URL}?t={title}&apikey={OMDB_API_KEY}")

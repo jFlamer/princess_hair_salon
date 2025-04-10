@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit appointment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+<body>
+<h2>Edit appointment</h2>
+<form method="post">
+    Princess:
+    <select name="princess_id">
+        {% for p in princesses %}
+        <option value="{{ p.id }}" {% if p.id == appointment.princess_id %}selected{% endif %}>{{ p.name }}</option>
+        {% endfor %}
+    </select><br>
+
+    Hairstyle:
+    <select name="hairstyle_id">
+        {% for h in hairstyles %}
+        <option value="{{ h.id }}" {% if h.id == appointment.hairstyle_id %}selected{% endif %}>{{ h.name }}</option>
+        {% endfor %}
+    </select><br>
+
+    Appointment Time:
+    <input type="datetime-local" name="appointment_time"
+       value="{{ appointment.appointment_time.strftime('%Y-%m-%dT%H:%M') if appointment.appointment_time else '' }}">
+
+    <button type="submit">Submit</button>
+</form>
+
+    <div class="back-home">
+        <a href="{{ url_for('index') }}" class="home-btn">Back to Home</a>
+    </div>
+
+</body>
+</html>
