@@ -9,21 +9,16 @@
 <body>
     <h1>Add Princess</h1>
 
-    <!-- Form to Add a New Princess -->
     <form method="POST" action="{{ url_for('add_princess') }}">
-        <!-- Princess Name -->
         <label for="name">Princess Name:</label>
         <input type="text" id="name" name="name" required>
 
-        <!-- Movie Name -->
         <label for="movie">Movie Name:</label>
         <input type="text" id="movie" name="movie" required>
 
-        <!-- Animated Checkbox -->
         <label for="is_animated">Is Animated?</label>
         <input type="checkbox" id="is_animated" name="is_animated">
 
-        <!-- Submit Button -->
         <button type="submit">Add Princess</button>
     </form>
 

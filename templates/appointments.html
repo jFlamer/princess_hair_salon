@@ -40,18 +40,19 @@
 
 
     <div>
-        <a href="{{ url_for('index') }}">Back to Home</a>
-        <p>Page {{ pagination.page }} of {{ pagination.pages }}</p>
-    </div>
-
-    <div>
         {% if pagination.has_prev %}
         <a href="{{ url_for('appointments', page=pagination.prev_num) }}">Previous</a>
         {% endif %}
 
+        <span>Page {{ pagination.page }} of {{ pagination.pages }}</span>
+
         {% if pagination.has_next %}
         <a href="{{ url_for('appointments', page=pagination.next_num) }}">Next</a>
         {% endif %}
+    </div>
+
+    <div>
+        <a href="{{ url_for('index') }}">Back to Home</a>
     </div>
 </body>
 </html>

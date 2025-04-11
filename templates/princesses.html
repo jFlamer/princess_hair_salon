@@ -8,13 +8,11 @@
 <body>
     <h1>Princesses</h1>
 
-    <!-- Search Form -->
     <form method="GET" action="{{ url_for('princesses') }}">
         <input type="text" name="search" placeholder="Search by name" value="{{ request.args.get('search', '') }}">
         <button type="submi need to update my css fileit">Search</button>
     </form>
 
-    <!-- Sort by options -->
     <div class="sort-container">
         <h3>Sort By</h3>
         <div class="sort-buttons">
@@ -56,7 +54,6 @@
 
 
     <div>
-        <!-- Pagination Controls -->
         {% if pagination.has_prev %}
         <a href="{{ url_for('princesses', page=pagination.prev_num) }}">Previous</a>
         {% endif %}
@@ -70,7 +67,6 @@
 
     <br>
 
-    <!-- Back to Home Link -->
     <div class="back-home">
         <a href="{{ url_for('index') }}" class="home-btn">Back to Home</a>
     </div>

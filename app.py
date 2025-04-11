@@ -1,6 +1,4 @@
 from datetime import datetime
-from urllib.parse import quote
-
 from flask import Flask, render_template, request, redirect, url_for
 from models import db, Princess, Hairstyle, Appointment
 import requests
@@ -14,7 +12,6 @@ db.init_app(app)
 OMDB_API_KEY = 'ea3ffd44'
 OMDB_BASE_URL = 'http://www.omdbapi.com/'
 
-# Create all tables within the context of the app
 with app.app_context():
     db.create_all()
 
@@ -25,7 +22,6 @@ def index():
     sort_by = request.args.get('sort', 'id')
     page = request.args.get('page', 1, type=int)
 
-    # Querying princesses with pagination
     query = Princess.query
     if search:
         query = query.filter(Princess.name.contains(search))
@@ -34,12 +30,6 @@ def index():
     princess_pagination = query.paginate(page=page, per_page=10)
     appointment_pagination = Appointment.query.paginate(page=page, per_page=10)
     hairstyle_pagination = Hairstyle.query.paginate(page=page, per_page=10)
-    #
-    # return render_template('index.html',
-    #                        pagination=princess_pagination,
-    #                        princesses=princess_pagination.items,
-    #                        appointments=appointment_pagination.items,
-    #                        hairstyles=hairstyle_pagination.items)
 
     movies = db.session.query(Princess.movie).distinct().all()
     titles = list(set([title.strip() for (title,) in movies if title]))
@@ -57,18 +47,15 @@ def index():
 @app.route('/princesses', methods=['GET'])
 def princesses():
     search = request.args.get('search', '')
-    sort_by = request.args.get('sort', 'id')  # Default sort by 'id'
+    sort_by = request.args.get('sort', 'id')  #Default sorting by 'id'
     page = request.args.get('page', 1, type=int)
 
-    # Querying princesses with pagination and sorting
     query = Princess.query
     if search:
         query = query.filter(Princess.name.contains(search))
 
-    # Sorting logic
     query = query.order_by(getattr(Princess, sort_by))
 
-    # Paginate the results
     princess_pagination = query.paginate(page=page, per_page=7)
 
     return render_template('princesses.html', princesses=princess_pagination.items, pagination=princess_pagination)
@@ -100,37 +87,29 @@ def add_princess():
         try:
             name = request.form['name']
             movie = request.form['movie']
-            # release_date = datetime.strptime(request.form['release_date'], "%Y-%m-%d")
             is_animated = request.form.get('is_animated') == 'on'
-            # rating = float(request.form['rating'])
 
-            # fetching rest of the data
             movie_encoded = movie.replace(" ", "+")
             response = requests.get(f"{OMDB_BASE_URL}?t={movie_encoded}&apikey={OMDB_API_KEY}")
-            # response = requests.get(f"{OMDB_BASE_URL}?t={movie}")
             data = response.json()
-            print(f"Requesting: {OMDB_BASE_URL}?t={movie.lower()}&apikey={OMDB_API_KEY}")
+
+            # print(f"Requesting: {OMDB_BASE_URL}?t={movie.lower()}&apikey={OMDB_API_KEY}")
 
             if data.get('Response') == 'True':
                 try:
-                    # Try parsing the release date
                     release_date_str = data.get('Released', 'Unknown')
                     if release_date_str != 'Unknown':
                         release_date = datetime.strptime(release_date_str, "%d %b %Y")
                     else:
-                        release_date = None  # Set to None if no valid date
+                        release_date = None
                 except ValueError:
-                    release_date = None  # Set to None if parsing fails
+                    release_date = None
 
                 rating = data.get('imdbRating', 'N/A')
             else:
                 print(movie_encoded)
                 release_date = None
                 rating = None
-
-            # print(movie)
-            # print(f"Release Date: {release_date}")
-            # print(f"Rating: {rating}")
 
             genre = data.get('Genre')
             poster = data.get('Poster')
@@ -149,7 +128,6 @@ def add_princess():
             db.session.commit()
             return redirect(url_for('princesses'))
         except Exception as e:
-            # This will print the error to your terminal
             print("ERROR:", e)
             return f"<h3>Something went wrong: {e}</h3>", 500
 
@@ -286,6 +264,8 @@ def edit_appointment(id):
         db.session.commit()
         return redirect(url_for('appointments'))
     return render_template('edit_appointment.html', princesses=princesses, hairstyles=hairstyles, appointment=appointment)
+
+
 def get_movie_rating(title):
     try:
         response = requests.get(f"{OMDB_BASE_URL}?t={title}&apikey={OMDB_API_KEY}")
