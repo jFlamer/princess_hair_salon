@@ -32,8 +32,6 @@ def index():
     query = query.order_by(getattr(Princess, sort_by))
 
     princess_pagination = query.paginate(page=page, per_page=10)
-
-    # Paginate appointments and hairstyles
     appointment_pagination = Appointment.query.paginate(page=page, per_page=10)
     hairstyle_pagination = Hairstyle.query.paginate(page=page, per_page=10)
     #
@@ -71,7 +69,7 @@ def princesses():
     query = query.order_by(getattr(Princess, sort_by))
 
     # Paginate the results
-    princess_pagination = query.paginate(page=page, per_page=10)
+    princess_pagination = query.paginate(page=page, per_page=7)
 
     return render_template('princesses.html', princesses=princess_pagination.items, pagination=princess_pagination)
 
@@ -79,7 +77,7 @@ def princesses():
 @app.route('/hairstyles', methods=['GET'])
 def hairstyles():
     page = request.args.get('page', 1, type=int)
-    hairstyle_pagination = Hairstyle.query.paginate(page=page, per_page=10)
+    hairstyle_pagination = Hairstyle.query.paginate(page=page, per_page=7)
 
     return render_template('hairstyles.html', hairstyles=hairstyle_pagination.items, pagination=hairstyle_pagination)
 
@@ -87,7 +85,7 @@ def hairstyles():
 @app.route('/appointments', methods=['GET'])
 def appointments():
     page = request.args.get('page', 1, type=int)
-    appointment_pagination = Appointment.query.paginate(page=page, per_page=10)
+    appointment_pagination = Appointment.query.paginate(page=page, per_page=7)
 
     return render_template('appointments.html', appointments=appointment_pagination.items,
                            pagination=appointment_pagination)
