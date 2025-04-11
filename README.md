@@ -34,6 +34,7 @@ This is a web-based appointment and management system for a princess-themed hair
     - Ratings
     - Genres
     - Poster URLs
+  - Dynamically run during editing princess entity
 
 - **Search**:
   - Search princesses by name
